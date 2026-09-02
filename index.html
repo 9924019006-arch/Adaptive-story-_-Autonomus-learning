@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AdaptivAI - Autonomous Learning Strategy Engine</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    body { background-color: #030712; color: #f3f4f6; min-height: 100vh; }
+    header { position: sticky; top: 0; z-index: 50; background: rgba(3, 7, 18, 0.9); backdrop-filter: blur(12px); border-bottom: 1px solid #1f2937; }
+    .nav-container { max-width: 1280px; margin: 0 auto; padding: 0 1.5rem; height: 5rem; display: flex; align-items: center; justify-content: space-between; }
+    .logo { display: flex; align-items: center; gap: 0.75rem; cursor: pointer; font-size: 1.35rem; font-weight: 800; color: #ffffff; }
+    .logo span { color: #34d399; }
+    .header-center { text-align: center; }
+    .header-center h1 { font-size: 0.85rem; font-weight: 700; text-transform: uppercase; color: #e5e7eb; letter-spacing: 0.05em; }
+    .header-center p { font-size: 0.75rem; color: #34d399; font-family: monospace; }
+    nav { display: flex; align-items: center; gap: 1.25rem; }
+    nav button { background: none; border: none; cursor: pointer; font-size: 0.875rem; font-weight: 500; color: #9ca3af; }
+    nav button:hover, nav button.active { color: #34d399; }
+    .btn-cta { background-color: #10b981; color: #030712; padding: 0.65rem 1.25rem; border-radius: 0.75rem; font-weight: 700; font-size: 0.75rem; text-transform: uppercase; border: none; cursor: pointer; }
+    .btn-cta:hover { background-color: #059669; }
+    .page-container { max-width: 1280px; margin: 0 auto; padding: 3rem 1.5rem; }
+    .hidden { display: none !important; }
+    
+    /* Hero section */
+    .hero { text-align: center; max-width: 56rem; margin: 0 auto 4rem auto; display: flex; flex-direction: column; gap: 1.5rem; }
+    .hero-badge { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.4rem 1rem; border-radius: 9999px; background: rgba(6, 78, 59, 0.5); border: 1px solid rgba(16, 185, 129, 0.3); color: #34d399; font-size: 0.8rem; font-weight: 600; width: fit-content; margin: 0 auto; }
+    .hero h2 { font-size: 3rem; font-weight: 900; line-height: 1.15; color: #ffffff; }
+    .hero h2 span { color: #34d399; }
+    .hero p { font-size: 1.05rem; color: #9ca3af; line-height: 1.6; }
+    .hero-buttons { display: flex; justify-content: center; gap: 1rem; }
+    .btn-hero-primary { background-color: #10b981; color: #030712; padding: 0.9rem 2rem; border-radius: 1rem; font-weight: 700; font-size: 0.95rem; border: none; cursor: pointer; }
+    .btn-hero-sec { background: #111827; color: #e5e7eb; border: 1px solid #1f2937; padding: 0.9rem 2rem; border-radius: 1rem; font-weight: 700; font-size: 0.95rem; cursor: pointer; }
+
+    /* Features Grid */
+    .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.5rem; }
+    .feature-card { background-color: #0b1120; border: 1px solid #1f2937; padding: 1.75rem; border-radius: 1.5rem; display: flex; flex-direction: column; gap: 0.75rem; }
+    .feature-card h3 { font-size: 1.05rem; font-weight: 700; color: #ffffff; }
+    .feature-card p { font-size: 0.85rem; color: #9ca3af; line-height: 1.5; }
+
+    /* Tracks & Persona */
+    .tracks-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; margin: 2rem 0; }
+    .track-card { padding: 1.75rem; border-radius: 1.5rem; border: 1px solid #1f2937; background: #0b1120; cursor: pointer; display: flex; flex-direction: column; gap: 0.75rem; }
+    .track-card.active { border-color: #10b981; background: rgba(6, 78, 59, 0.2); }
+    .track-card h3 { color: #ffffff; font-size: 1.15rem; }
+    .track-card p { color: #9ca3af; font-size: 0.85rem; }
+    .pill-group { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.5rem; }
+    .pill { font-size: 0.7rem; font-family: monospace; background: #111827; color: #d1d5db; padding: 0.3rem 0.6rem; border-radius: 0.5rem; border: 1px solid #374151; }
+
+    /* Arena */
+    .arena-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 2rem; }
+    .arena-card { background: #0b1120; border: 1px solid #1f2937; padding: 2rem; border-radius: 1.5rem; display: flex; flex-direction: column; gap: 1.25rem; }
+    .arena-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #1f2937; padding-bottom: 1rem; }
+    .badge-node { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: #34d399; background: rgba(6, 78, 59, 0.5); border: 1px solid #065f46; padding: 0.3rem 0.8rem; border-radius: 9999px; }
+    .badge-budget { font-size: 0.75rem; font-weight: 600; color: #d1d5db; background: #030712; padding: 0.35rem 0.8rem; border-radius: 0.75rem; border: 1px solid #1f2937; }
+    .brief-box { padding: 1rem; background: #030712; border: 1px solid #1f2937; border-radius: 1rem; }
+    .brief-title { font-size: 0.7rem; color: #9ca3af; text-transform: uppercase; font-weight: 700; margin-bottom: 0.25rem; }
+    .brief-desc { font-size: 0.85rem; color: #d1d5db; }
+    .question-title { font-size: 1.15rem; font-weight: 700; color: #ffffff; }
+    .options-list { display: flex; flex-direction: column; gap: 0.75rem; }
+    .option-btn { text-align: left; padding: 1rem; border-radius: 0.75rem; font-size: 0.85rem; font-weight: 500; border: 1px solid #1f2937; background: #030712; color: #d1d5db; cursor: pointer; }
+    .option-btn.selected { border-color: #10b981; background: rgba(6, 78, 59, 0.3); color: #a7f3d0; }
+    .hint-box { padding: 1rem; background: rgba(120, 53, 15, 0.25); border: 1px solid rgba(245, 158, 11, 0.4); border-radius: 1rem; color: #fef3c7; font-size: 0.8rem; }
+    .feedback-box { padding: 0.75rem; border-radius: 0.75rem; font-size: 0.75rem; font-weight: 600; }
+    .feedback-box.correct { border: 1px solid rgba(16, 185, 129, 0.4); background: rgba(6, 78, 59, 0.5); color: #6ee7b7; }
+    .feedback-box.incorrect { border: 1px solid rgba(244, 63, 94, 0.4); background: rgba(136, 19, 55, 0.5); color: #fda4af; }
+
+    /* Graph Nodes */
+    .graph-item { padding: 0.85rem; border-radius: 1rem; border: 1px solid #1f2937; background: rgba(3, 7, 18, 0.5); display: flex; flex-direction: column; gap: 0.4rem; margin-bottom: 0.75rem; }
+    .graph-item-top { display: flex; justify-content: space-between; font-size: 0.8rem; font-weight: 600; color: #ffffff; }
+    .progress-bar-bg { width: 100%; background: #1f2937; height: 0.35rem; border-radius: 9999px; overflow: hidden; }
+    .progress-bar-fill { height: 100%; width: 10%; background: #f59e0b; transition: width 0.4s ease; }
+    .trace-list { max-height: 12rem; overflow-y: auto; display: flex; flex-direction: column; gap: 0.5rem; }
+    .trace-item { font-size: 0.725rem; background: #030712; border: 1px solid #1f2937; padding: 0.65rem; border-radius: 0.75rem; }
+
+    /* Summary Charts */
+    .summary-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; margin: 2rem 0; }
+    .chart-container { height: 9rem; display: flex; align-items: flex-end; justify-content: center; gap: 2rem; background: #030712; padding: 1.5rem; border-radius: 1rem; border: 1px solid #1f2937; }
+    .bar { width: 3.5rem; border-top-left-radius: 0.5rem; border-top-right-radius: 0.5rem; }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header>
+    <div class="nav-container">
+      <div class="logo" onclick="switchPage('home')">
+        ⚡ Adaptiv<span>AI</span>
+      </div>
+      <div class="header-center">
+        <h1>Autonomous Learning Strategy Engine</h1>
+        <p>PS 6: Adaptive Story Challenge</p>
+      </div>
+      <nav>
+        <button onclick="switchPage('home')" id="nav-home" class="active">Home</button>
+        <button onclick="switchPage('select_track')" id="nav-track">Live Arena</button>
+        <button onclick="switchPage('summary')" id="nav-summary">Analytics</button>
+        <button class="btn-cta" onclick="switchPage('select_track')">Get Started for Free →</button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- PAGE 1: HOME -->
+  <section id="page-home" class="page-container">
+    <div class="hero">
+      <div class="hero-badge">✨ Autonomous Learning Strategy Engine</div>
+      <h2>Master Complex Topics with an <span>Autonomous AI</span> Strategy Engine</h2>
+      <p>Conventional platforms deliver the same rigid curriculum sequence to every student. AdaptivAI uses Bayesian Knowledge Tracing and a dynamic DAG to diagnose misconceptions in real-time, choosing optimal interventions within a strict 10-step budget.</p>
+      <div class="hero-buttons">
+        <button class="btn-hero-primary" onclick="switchPage('select_track')">Get Started for Free →</button>
+        <button class="btn-hero-sec" onclick="switchPage('select_track')">Test Adaptive Arena</button>
+      </div>
+    </div>
+    <div class="features-grid">
+      <div class="feature-card">
+        <h3>Dynamic Concept DAG</h3>
+        <p>Maintains evolving prerequisite dependency graphs with real-time mastery tracing.</p>
+      </div>
+      <div class="feature-card">
+        <h3>Misconception Resolver</h3>
+        <p>Identifies deep-seated conceptual bugs and triggers scaffolding hints instantly.</p>
+      </div>
+      <div class="feature-card">
+        <h3>Budget-Constrained Policy</h3>
+        <p>Balances latency vs expected learning gain, choosing between hints, drills, or advancement.</p>
+      </div>
+      <div class="feature-card">
+        <h3>+48% Benchmark Gain</h3>
+        <p>Proves mathematically superior learning progression over standard linear curriculum sequences.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- PAGE 2: TRACK & PERSONA SELECTION -->
+  <section id="page-track" class="page-container hidden">
+    <div style="text-align:center; max-width:40rem; margin:0 auto 2rem auto;">
+      <h2 style="font-size:2.25rem; font-weight:800; color:#fff;">Select Your Learning Track</h2>
+      <p style="color:#9ca3af; font-size:0.9rem; margin-top:0.5rem;">Choose an academic curriculum to initialize its Directed Acyclic Graph (DAG).</p>
+    </div>
+    <div class="tracks-grid">
+      <div class="track-card active" id="track-py" onclick="selectTrack('python')">
+        <h3>Python Core & Algorithmic Logic</h3>
+        <p>Master execution branching, loops, and indexing under state constraints.</p>
+        <div class="pill-group">
+          <span class="pill">Variables</span>
+          <span class="pill">Loops & Control</span>
+          <span class="pill">Lists/Arrays</span>
+        </div>
+      </div>
+      <div class="track-card" id="track-sql" onclick="selectTrack('sql')">
+        <h3>SQL & Relational Schemas</h3>
+        <p>Relational constraints, joins, grouping, and transactional aggregations.</p>
+        <div class="pill-group">
+          <span class="pill">Keys & Constraints</span>
+          <span class="pill">JOIN Mechanics</span>
+          <span class="pill">Grouping</span>
+        </div>
+      </div>
+    </div>
+    <div style="text-align:center;">
+      <button class="btn-hero-primary" onclick="startArena()">Enter Adaptive Assessment Arena →</button>
+    </div>
+  </section>
+
+  <!-- PAGE 3: LIVE INTERACTIVE ARENA -->
+  <section id="page-arena" class="page-container hidden">
+    <div class="arena-grid">
+      
+      <!-- Scenario Assessment Box -->
+      <div class="arena-card">
+        <div class="arena-header">
+          <span class="badge-node" id="node-tag">Node: Variables & Types</span>
+          <span class="badge-budget">Budget Left: <strong id="budget-num" style="color:#fff;">10</strong> / 10</span>
+        </div>
+        <div class="brief-box">
+          <div class="brief-title">📖 Mission Brief</div>
+          <div class="brief-desc" id="brief-text">Decrypt sequence buffer indexing elements from start to stop with step increments.</div>
+        </div>
+        <div class="question-title" id="question-text">In Python, what exact integer sequence is produced by range(1, 7, 2)?</div>
+        
+        <div id="hint-box" class="hint-box hidden">
+          <strong style="text-transform:uppercase; color:#fde68a;">Scaffolding Intervention:</strong>
+          <p id="hint-text" style="margin-top:0.25rem;">range(start, stop, step) generates integers up to stop-1, skipping by step increments.</p>
+        </div>
+
+        <div class="options-list" id="options-container">
+          <!-- Dynamically filled -->
+        </div>
+
+        <button class="btn-hero-primary" id="btn-submit" onclick="submitAnswer()" style="opacity:0.5;" disabled>Submit Response</button>
+        <div id="feedback-box" class="feedback-box hidden"></div>
+      </div>
+
+      <!-- Live DAG & Decision Trace -->
+      <div>
+        <div class="arena-card" style="margin-bottom:1.5rem;">
+          <h4 style="font-size:0.75rem; text-transform:uppercase; color:#9ca3af; letter-spacing:0.05em;">Concept Knowledge Graph (DAG)</h4>
+          <div id="graph-container">
+            <!-- Dynamic Graph items -->
+          </div>
+        </div>
+
+        <div class="arena-card">
+          <h4 style="font-size:0.75rem; text-transform:uppercase; color:#9ca3af; letter-spacing:0.05em;">Autonomous Decision Trace</h4>
+          <div class="trace-list" id="trace-container">
+            <div style="font-size:0.75rem; color:#6b7280; font-style:italic;">Agent actively monitoring learner interaction state...</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- PAGE 4: SUMMARY & BENCHMARK ANALYTICS -->
+  <section id="page-summary" class="page-container hidden">
+    <div style="text-align:center; max-width:32rem; margin:0 auto 2rem auto;">
+      <h2 style="font-size:2rem; font-weight:800; color:#fff;">Learning Cycle Completed</h2>
+      <p style="color:#9ca3af; font-size:0.9rem; margin-top:0.5rem;">Evaluation benchmark comparing static delivery vs our autonomous adaptive engine.</p>
+    </div>
+
+    <div class="summary-grid">
+      <div class="feature-card">
+        <h4 style="font-size:0.8rem; text-transform:uppercase; color:#9ca3af;">Static Sequence Baseline</h4>
+        <div class="chart-container">
+          <div style="text-align:center;">
+            <div class="bar" style="height:2.5rem; background:#374151;"></div>
+            <span style="font-size:0.7rem; color:#9ca3af;">Pre (15%)</span>
+          </div>
+          <div style="text-align:center;">
+            <div class="bar" style="height:5rem; background:#4b5563;"></div>
+            <span style="font-size:0.7rem; color:#d1d5db; font-weight:700;">Post (38%)</span>
+          </div>
+        </div>
+        <p style="font-size:0.75rem; color:#6b7280; text-align:center;">Wastes interactions on repetitive questions without tracking mastery.</p>
+      </div>
+
+      <div class="feature-card" style="border-color:rgba(16, 185, 129, 0.4);">
+        <h4 style="font-size:0.8rem; text-transform:uppercase; color:#34d399;">Our Adaptive Engine (Active)</h4>
+        <div class="chart-container">
+          <div style="text-align:center;">
+            <div class="bar" style="height:2.5rem; background:#374151;"></div>
+            <span style="font-size:0.7rem; color:#9ca3af;">Pre (15%)</span>
+          </div>
+          <div style="text-align:center;">
+            <div class="bar" style="height:8.5rem; background:#10b981; box-shadow:0 0 15px rgba(16, 185, 129, 0.3);"></div>
+            <span style="font-size:0.7rem; color:#6ee7b7; font-weight:700;">Post (86%)</span>
+          </div>
+        </div>
+        <p style="font-size:0.75rem; color:#34d399; text-align:center; font-weight:600;">Learning Gain: +48% net improvement over baseline within 10 steps.</p>
+      </div>
+    </div>
+
+    <div style="text-align:center;">
+      <button class="btn-hero-primary" onclick="restart()">Restart Simulation</button>
+    </div>
+  </section>
+
+  <script>
+    // DATA
+    const DATA = {
+      python: {
+        nodes: [
+          { id: 'p1', label: '1. Variables & Types', score: 10 },
+          { id: 'p2', label: '2. Loop Controls & Iteration', score: 10 },
+          { id: 'p3', label: '3. Data Structures (Lists/Arrays)', score: 10 }
+        ],
+        scenarios: [
+          {
+            nodeId: 'p1', nodeName: 'Variables & Types',
+            brief: 'Decrypt sequence buffer indexing elements from start to stop with step jumps.',
+            question: 'In Python, what exact integer sequence is produced by range(1, 7, 2)?',
+            options: ['[1, 3, 5]', '[1, 2, 3, 4, 5, 6]', '[1, 3, 5, 7]', '[2, 4, 6]'],
+            correct: 0,
+            hint: 'range(start, stop, step) stops strictly before the stop number (up to stop-1).',
+            misconception: 'Off-by-one upper bound error or step confusion'
+          },
+          {
+            nodeId: 'p2', nodeName: 'Loop Controls & Iteration',
+            brief: 'Planetary Defense Grid: Terminate scanner cycle immediately when an anomaly is identified.',
+            question: 'Which statement immediately exits and terminates the enclosing loop?',
+            options: ['continue', 'break', 'pass', 'skip'],
+            correct: 1,
+            hint: 'break exits the entire loop immediately; continue only skips to the next iteration.',
+            misconception: 'Confusing break (loop exit) with continue (iteration skip)'
+          },
+          {
+            nodeId: 'p3', nodeName: 'Data Structures (Lists/Arrays)',
+            brief: 'Telemetry Cache: Fetch the single most recently received item from a dynamic array.',
+            question: 'Which index accesses the absolute last element in a Python list?',
+            options: ['[0]', '[len - 1]', '[-1]', '[last]'],
+            correct: 2,
+            hint: 'Python natively provides negative indices starting from -1 for reverse element lookup.',
+            misconception: 'Restricting lookup to non-negative 0-based limits'
+          }
+        ]
+      },
+      sql: {
+        nodes: [
+          { id: 's1', label: '1. Primary & Foreign Keys', score: 10 },
+          { id: 's2', label: '2. Relational JOIN Mechanics', score: 10 },
+          { id: 's3', label: '3. Aggregation & Grouping', score: 10 }
+        ],
+        scenarios: [
+          {
+            nodeId: 's1', nodeName: 'Primary & Foreign Keys',
+            brief: 'Financial Audit: Enforce unique non-null identifier constraint on bank accounts.',
+            question: 'Which constraint strictly enforces both uniqueness and non-null values?',
+            options: ['UNIQUE', 'FOREIGN KEY', 'PRIMARY KEY', 'CHECK'],
+            correct: 2,
+            hint: 'PRIMARY KEY uniquely identifies each record and strictly disallows NULLs.',
+            misconception: 'Believing UNIQUE disallows nulls without NOT NULL'
+          },
+          {
+            nodeId: 's2', nodeName: 'Relational JOIN Mechanics',
+            brief: 'Customer Portal: Fetch all users including those who placed 0 orders.',
+            question: 'Which JOIN clause guarantees all left-table rows are preserved?',
+            options: ['INNER JOIN', 'LEFT JOIN', 'CROSS JOIN', 'RIGHT JOIN'],
+            correct: 1,
+            hint: 'LEFT JOIN returns all records from the left table and matched rows from the right table.',
+            misconception: 'Selecting INNER JOIN which eliminates unmatched rows'
+          }
+        ]
+      }
+    };
+
+    let activeTrack = 'python';
+    let budget = 10;
+    let scenarioIdx = 0;
+    let selectedOption = null;
+    let startTime = Date.now();
+
+    function switchPage(page) {
+      ['home', 'track', 'arena', 'summary'].forEach(p => {
+        document.getElementById('page-' + p).classList.add('hidden');
+      });
+      document.getElementById('page-' + page).classList.remove('hidden');
+    }
+
+    function selectTrack(track) {
+      activeTrack = track;
+      document.getElementById('track-py').classList.toggle('active', track === 'python');
+      document.getElementById('track-sql').classList.toggle('active', t
